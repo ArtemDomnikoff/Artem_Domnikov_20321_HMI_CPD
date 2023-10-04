@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import ttk
 
 from tkinter import filedialog as fd
-import customtkinter
 from customtkinter import *
 import csv
 from tkcalendar import DateEntry
@@ -10,7 +9,7 @@ from tkcalendar import DateEntry
 set_appearance_mode('Light')
 
 
-class App(customtkinter.CTk):
+class App(CTk):
     def __init__(self):
         super().__init__()
         self.title('Expense accounting')
