@@ -133,6 +133,7 @@ if __name__ == '__main__':
     map2.add_link(Link(v2, v4))
     map2.add_link(Link(v3, v4))
     map2.add_link(Link(v4, v5))
+    # Тесты
     assert len(map2._links) == 5, "неверное число связей в списке _links класса LinkedGraph"
     assert len(map2._vertex) == 5, "неверное число вершин в списке _vertex класса LinkedGraph"
     map2.add_link(Link(v2, v1))
