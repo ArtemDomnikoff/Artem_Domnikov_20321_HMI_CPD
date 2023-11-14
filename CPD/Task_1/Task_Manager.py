@@ -49,10 +49,11 @@ class App(tk.Tk):
         for pid in pids:
             try:
                 p = psutil.Process(pid)
+                p.cpu_affinity([])
                 self.tree.insert('', tk.END,
                                  values=(p.name(),
                                          p.pid,
-                                         round(p.cpu_percent(), 3),
+                                         p.cpu_percent(0.1),
                                          round(p.memory_percent(), 3),
                                          )
                                  )
@@ -60,7 +61,7 @@ class App(tk.Tk):
                 pass
         self.sort(self.sort_col)
         self.tree.selection_add(self.tree.get_children()[index])
-        self.after(1000, self.update)
+        self.after(2000, self.update)
 
     def terminate_process(self):
         selected_item = self.tree.selection()[0]
