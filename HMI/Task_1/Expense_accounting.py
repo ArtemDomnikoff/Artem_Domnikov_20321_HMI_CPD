@@ -63,21 +63,26 @@ class App(CTk):
 
     # Загрузка таблицы из csv файла
     def load_csv(self):
-        for i in self.tree.get_children():
-            self.tree.delete(i)
-        file = fd.askopenfile()
-        csvreader = csv.reader(file, delimiter=',')
-        for row in csvreader:
-            self.tree.insert("", 'end', values=row)
-        self.config_sum()
-
+        try:
+            for i in self.tree.get_children():
+                self.tree.delete(i)
+            file = fd.askopenfile()
+            csvreader = csv.reader(file, delimiter=',')
+            for row in csvreader:
+                self.tree.insert("", 'end', values=row)
+            self.config_sum()
+        except TypeError:
+            pass
     # Сохранение таблицы в csv файл
     def save_csv(self):
-        file = fd.asksaveasfile(filetypes=[("CSV", "*.csv")], defaultextension='csv')
-        csvwriter = csv.writer(file, delimiter=',', lineterminator='\r')
-        for row_id in self.tree.get_children():
-            row = self.tree.item(row_id)['values']
-            csvwriter.writerow(row)
+        try:
+            file = fd.asksaveasfile(filetypes=[("CSV", "*.csv")], defaultextension='csv')
+            csvwriter = csv.writer(file, delimiter=',', lineterminator='\r')
+            for row_id in self.tree.get_children():
+                row = self.tree.item(row_id)['values']
+                csvwriter.writerow(row)
+        except TypeError:
+            pass
 
     # Сортировка таблицы
     def sort(self, col, reverse):
