@@ -26,6 +26,7 @@ except ConnectionRefusedError:
 except:
     pass
 ```
+![Alt text](image.png)
 ## Листинг 1_2 Server
 ```Py
 import socket
@@ -54,7 +55,10 @@ while True:
     except:
         pass
 ```
+![Alt text](image-1.png)
+
 ### Клиент-Сервер с pickle
+# Клиент Отправляет сереализованные данные на сервер 
 ## Листинг 2_1 Client
 ```Py
 import pickle
@@ -82,7 +86,7 @@ except:
     pass
 
 ```
-
+# Сервер принимает и выводит данные
 ## Листинг 2_2 Server
 ```Py
 import socket
@@ -112,7 +116,9 @@ while True:
     except:
         pass
 ```
+![Alt text](image-2.png)
 ### Клиент-Сервер через protobuf
+# Клиент Подключается к серверу и отправляет пакет сереализованных данных 
 ## Листинг 3_1 Client
 ```Py
 import socket
@@ -141,6 +147,7 @@ try:
 except ConnectionRefusedError:
     print('Подключение не установлено, сервер не отвечает')
 ```
+# Сервер принимает пакет данных и выводит их
 ## Листинг 3_2 Server
 ```Py
 import socket
@@ -170,3 +177,4 @@ while True:
     except:
         pass
 ```
+![Alt text](image-3.png)
