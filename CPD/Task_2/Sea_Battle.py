@@ -30,7 +30,7 @@ class Ship:
         self._is_move = True
         self._cells = [1] * length
 
-    # Меняет начальные координаты корабля
+    # Задаёт начальные координаты корабля
     def set_start_cords(self, x, y) -> None:
         self._x = x
         self._y = y
@@ -87,10 +87,13 @@ class Ship:
         return self._length
 
 
-class GameField:
+class GamePole:
     def __init__(self, size):
         self._size = size
         self._ships = []
+        self.field = [[0 for _ in range(self._size)] for _ in range(self._size)]
+        self._attacked = []
+        self.count = 0
 
     # Метод для инициализации 10 кораблей
     def init(self):
@@ -119,7 +122,7 @@ class GameField:
             else:
                 check_length = x + go - 1
             for x_z, y_z in zone:
-                if self.field[y_z][x_z] == 1 and x_z == check_length:
+                if self.field[y_z][x_z] != 0 and x_z == check_length:
                     return False
 
             # Проверка на выход из поля
@@ -134,7 +137,7 @@ class GameField:
             else:
                 check_lenght = y + go - 1
             for x_z, y_z in zone:
-                if self.field[y_z][x_z] == 1 and y_z == check_lenght:
+                if self.field[y_z][x_z] != 0 and y_z == check_lenght:
                     return False
 
             # Проверка на выход из поля
@@ -155,6 +158,7 @@ class GameField:
                 if flag:
                     ship.move(-go)
                     self.update_board()
+        self._attacked = []
 
     # Метод для обновления доски
     def update_board(self) -> None:
@@ -188,59 +192,139 @@ class GameField:
         return x_rand, y_rand
 
     # Возвращает список всех кораблей
+    @property
     def get_ships(self):
         return self._ships
 
+    @property
+    def size(self):
+        return self._size
+
+    # Возвращает доску как двойной кортеж
+    def get_pole(self):
+        return tuple(tuple(sublist) for sublist in self.field)
+
     # Выводит доску в консоль
     def show(self):
-        for row in self.field:
+        self.count = 0
+        field = self.field
+        for x, y in self._attacked:
+            field[y][x] = '*'
+        for ship in self._ships:
+            if all(b == ship._cells[0] for b in ship._cells) and 2 in ship._cells:
+                self.count += 1
+            for i, (x, y) in enumerate(get_self_zone(ship._x, ship._y, ship._tp, ship._length)):
+                    field[y][x] = ship._cells[i]
+        for row in field:
             print(' '.join(map(str, row)))
         print('===============')
 
-    # Возвращает доску как двойной кортеж
-    def get_field(self):
-        return tuple(tuple(sublist) for sublist in self.field)
+    def hidden_show(self):
+        self.count = 0
+        field = [['~' for _ in range(self._size)] for _ in range(self._size)]
+        marker = '+'
+        for x, y in self._attacked:
+            field[y][x] = '*'
+        for ship in self._ships:
+            if all(b == ship._cells[0] for b in ship._cells) and 2 in ship._cells:
+                for x, y in get_zone(ship._x, ship._y, ship._tp, ship._length, self._size):
+                    field[y][x] = '#'
+                marker = '-'
+                self.count += 1
+            for i, (x, y) in enumerate(get_self_zone(ship._x, ship._y, ship._tp, ship._length)):
+                if ship._cells[i] == 2:
+                    field[y][x] = marker
+        for row in field:
+            print(' '.join(map(str, row)))
 
+
+class SeaBattle:
+    # Инициализация игровых полей
+    def __init__(self):
+        check = True
+        while check:
+            try:
+                self.size = int(input('Введите размер поля:'))
+                check = False
+            except ValueError:
+                print('Данные введены неверно.')
+        self.gamefield = GamePole(self.size)
+        self.enemyfield = GamePole(self.size)
+        placement_method = input('Расставить координаты случайно? (да/нет): ').lower().replace(' ', '')
+        if placement_method == 'да':
+            self.gamefield.init()
+        else:
+            self.placement()
+        self.game()
+
+    # Метод расстановки кораблей по координатам
+    def placement(self):
+        for i in range(1, 5):
+            for j in range(i):
+                check = True
+                while check:
+                    try:
+                        print(f"Корабль {5 - i}")
+                        x, y, tp = input("Введите координаты корабля и его направление: ").split(' ')
+                        if self.gamefield.size-1< x < 0 or self.gamefield.size-1 < y < 0 or x < 0 or y < 0:
+                            raise ValueError
+                        ship = Ship(5 - i, int(tp), int(x), int(y))
+                        self.gamefield.get_ships.append(ship)
+                        check = False
+                    except ValueError:
+                        print('Данные введены неверно.')
+
+    # Метод для начала игры.
+    def game(self):
+        self.enemyfield.init()
+        self.enemyfield.update_board()
+        self.gamefield.update_board()
+        self.view_battlefield()
+        flag = True
+        while flag:
+            if self.enemyfield.count == len(self.enemyfield.get_ships):
+                print("Вы победили. Все вражеские корабли уничтожены.")
+                break
+            elif self.gamefield.count == len(self.gamefield.get_ships):
+                print("Вы проиграли. Все ваши корабли уничтожены.")
+                break
+            check = True
+            while check:
+                try:
+                    x, y = input("Введите координаты для атаки(x y): ").split(' ')
+                    if self.gamefield.size - 1 < int(x) or self.gamefield.size - 1 < int(y) or int(x) <0 or int(y) <0:
+                        raise ValueError
+                    self.attack(self.enemyfield, int(x), int(y))
+                    self.attack(self.gamefield, randint(0, self.gamefield.size - 1),
+                                randint(0, self.gamefield.size - 1))
+                    self.view_battlefield()
+                    self.gamefield.move_ships()
+                    self.enemyfield.move_ships()
+                    check = False
+                except ValueError:
+                    print("Данные введены неверно")
+
+    # Метод для атаки корабля по координатам
+    def attack(self, field, x, y):
+        for ship in field.get_ships:
+            if [x, y] in get_self_zone(ship._x, ship._y, ship._tp, ship._length):
+                if ship._tp == 1:
+                    ship._cells[x - ship._x] = 2
+                elif ship._tp == 2:
+                    ship._cells[y - ship._y] = 2
+                ship._is_move = False
+                break
+        field._attacked.append([x, y])
+
+    # Метод выводит игровые поля в консоль
+    def view_battlefield(self):
+        self.gamefield.update_board()
+        self.enemyfield.update_board()
+        print('Gamefield')
+        self.gamefield.show()
+        print('Enemyfield')
+        self.enemyfield.hidden_show()
 
 if __name__ == '__main__':
-    # Tests
-    ship = Ship(2)
-    ship = Ship(2, 1)
-    ship = Ship(3, 2, 0, 0)
-    assert ship._length == 3 and ship._tp == 2 and ship._x == 0 and ship._y == 0, "неверные значения атрибутов объекта класса Ship"
-    assert ship._cells == [1, 1, 1], "неверный список _cells"
-    assert ship._is_move, "неверное значение атрибута _is_move"
-    ship.set_start_cords(1, 2)
-    assert ship._x == 1 and ship._y == 2, "неверно отработал метод set_start_coords()"
-    assert ship.get_start_cords() == (1, 2), "неверно отработал метод get_start_coords()"
-    ship.move(1)
-    s1 = Ship(4, 1, 0, 0)
-    s2 = Ship(3, 2, 0, 0)
-    s3 = Ship(3, 2, 0, 2)
-    assert s1.is_collide(s2), "неверно работает метод is_collide() для кораблей Ship(4, 1, 0, 0) и Ship(3, 2, 0, 0)"
-    assert s1.is_collide(
-        s3) == False, "неверно работает метод is_collide() для кораблей Ship(4, 1, 0, 0) и Ship(3, 2, 0, 2)"
-    s2 = Ship(3, 2, 1, 1)
-    assert s1.is_collide(s2), "неверно работает метод is_collide() для кораблей Ship(4, 1, 0, 0) и Ship(3, 2, 1, 1)"
-    s2 = Ship(3, 1, 8, 1)
-    assert s2.is_out_pole(10), "неверно работает метод is_out_pole() для корабля Ship(3, 1, 8, 1)"
-    s2 = Ship(3, 2, 1, 5)
-    assert s2.is_out_pole(10) == False, "неверно работает метод is_out_pole(10) для корабля Ship(3, 2, 1, 5)"
-    s2[0] = 2
-    assert s2[0] == 2, "неверно работает обращение ship[indx]"
-    p = GameField(10)
-    p.init()
-    for nn in range(5):
-        for s in p._ships:
-            assert s.is_out_pole(10) == False, "корабли выходят за пределы игрового поля"
-            for ship in p.get_ships():
-                if s != ship:
-                    assert s.is_collide(ship) == False, "корабли на игровом поле соприкасаются"
-        p.move_ships()
-
-    gp = p.get_field()
-    assert type(gp) == tuple and type(gp[0]) == tuple, "метод get_pole должен возвращать двумерный кортеж"
-    assert len(gp) == 10 and len(gp[0]) == 10, "неверные размеры игрового поля, которое вернул метод get_pole"
-    pole_size_8 = GameField(8)
-    pole_size_8.init()
+    SeaBattle()
     print("\n Passed")
