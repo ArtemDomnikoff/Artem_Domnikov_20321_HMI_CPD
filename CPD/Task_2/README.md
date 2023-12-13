@@ -58,7 +58,7 @@ class Ship:
 
     # Проверка на столкновение с другим кораблём
     def is_collide(self, ship) -> bool:
-        x, y = ship.get_start_cords()
+        x, y = ship.get_start_coords()
         ship_zone = get_zone(x, y, ship.tp, ship.length, 10)
         self_zone = get_self_zone(self._x, self._y, self._tp, self._length)
         for cords in self_zone:
@@ -118,7 +118,7 @@ class GamePole:
 
     # Метод для проверки на столкновение и выход из поля
     def move_check(self, ship, go) -> bool:
-        x, y = ship.get_start_cords()
+        x, y = ship.get_start_coords()
         if ship.tp == 1:
             # Провека на столкновение
             zone = get_zone(x + go, y, ship.tp, ship.length, self._size)
@@ -169,14 +169,14 @@ class GamePole:
     def update_board(self) -> None:
         self.field = [[0 for _ in range(self._size)] for _ in range(self._size)]
         for ship in self._ships:
-            x, y = self.get_random_cords(ship) if ship._x == ship._y is None else ship.get_start_cords()
+            x, y = self.get_random_cords(ship) if ship._x == ship._y is None else ship.get_start_coords()
             if ship.tp == 1:
                 for index, i in enumerate(range(x, x + ship.length)):
                     self.field[y][i] = ship._cells[index]
             elif ship.tp == 2:
                 for index, i in enumerate(range(y, y + ship.length)):
                     self.field[i][x] = ship._cells[index]
-            ship.set_start_cords(x, y)
+            ship.set_start_coords(x, y)
 
     # Метод для определения случайных кординат корабля
     def get_random_cords(self, ship) -> tuple:
@@ -219,7 +219,7 @@ class GamePole:
             if all(b == ship._cells[0] for b in ship._cells) and 2 in ship._cells:
                 self.count += 1
             for i, (x, y) in enumerate(get_self_zone(ship._x, ship._y, ship._tp, ship._length)):
-                    field[y][x] = ship._cells[i]
+                field[y][x] = ship._cells[i]
         for row in field:
             print(' '.join(map(str, row)))
         print('===============')
@@ -241,7 +241,7 @@ class GamePole:
                     field[y][x] = marker
         for row in field:
             print(' '.join(map(str, row)))
-            
+
 
 class SeaBattle:
     # Инициализация игровых полей
@@ -271,7 +271,7 @@ class SeaBattle:
                     try:
                         print(f"Корабль {5 - i}")
                         x, y, tp = input("Введите координаты корабля и его направление: ").split(' ')
-                        if self.gamefield.size-1< x < 0 or self.gamefield.size-1 < y < 0 or x < 0 or y < 0:
+                        if self.gamefield.size - 1 < x < 0 or self.gamefield.size - 1 < y < 0 or x < 0 or y < 0:
                             raise ValueError
                         ship = Ship(5 - i, int(tp), int(x), int(y))
                         self.gamefield.get_ships.append(ship)
@@ -297,7 +297,7 @@ class SeaBattle:
             while check:
                 try:
                     x, y = input("Введите координаты для атаки(x y): ").split(' ')
-                    if self.gamefield.size - 1 < int(x) or self.gamefield.size - 1 < int(y) or int(x) <0 or int(y) <0:
+                    if self.gamefield.size - 1 < int(x) or self.gamefield.size - 1 < int(y) or int(x) < 0 or int(y) < 0:
                         raise ValueError
                     self.attack(self.enemyfield, int(x), int(y))
                     self.attack(self.gamefield, randint(0, self.gamefield.size - 1),
@@ -329,6 +329,7 @@ class SeaBattle:
         self.gamefield.show()
         print('Enemyfield')
         self.enemyfield.hidden_show()
+
 
 if __name__ == '__main__':
     SeaBattle()
