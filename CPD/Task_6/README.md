@@ -236,7 +236,8 @@ message CombinedShipment {
     string id = 1;
     string status = 2;
     repeated Order ordersList = 3;
-}```
+}
+```
 ### Результат выполнения программы
 Вывод сервера
 ![img.png](img.png)

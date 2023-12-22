@@ -67,7 +67,6 @@ class OrderManagementServicer(order_management_pb2_grpc.OrderManagementServicer)
             response += ' ' + order.id
         return wrappers_pb2.StringValue(value=response)
 
-
     #Bi-di Streaming
     # Сервер принимает поток данных и записывает эти данные в список. Сервер возрвращает этот список в виде потока сообщений типа Order.
     def processOrders(self, request_iterator, context):
