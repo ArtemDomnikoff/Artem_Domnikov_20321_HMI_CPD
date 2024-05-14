@@ -111,6 +111,7 @@ class GamePole:
         ]
 
         self.update_board()
+
     # Метод для проверки на столкновение и выход из поля
     def move_check(self, ship, go) -> bool:
         x, y = ship.get_start_coords()
@@ -213,7 +214,7 @@ class GamePole:
             if all(b == ship._cells[0] for b in ship._cells) and 2 in ship._cells:
                 self.count += 1
             for i, (x, y) in enumerate(get_self_zone(ship._x, ship._y, ship._tp, ship._length)):
-                    field[y][x] = ship._cells[i]
+                field[y][x] = ship._cells[i]
         for row in field:
             print(' '.join(map(str, row)))
         print('===============')
@@ -265,7 +266,7 @@ class SeaBattle:
                     try:
                         print(f"Корабль {5 - i}")
                         x, y, tp = input("Введите координаты корабля и его направление: ").split(' ')
-                        if self.gamefield.size-1< x < 0 or self.gamefield.size-1 < y < 0 or x < 0 or y < 0:
+                        if self.gamefield.size - 1 < x < 0 or self.gamefield.size - 1 < y < 0 or x < 0 or y < 0:
                             raise ValueError
                         ship = Ship(5 - i, int(tp), int(x), int(y))
                         self.gamefield.get_ships().append(ship)
@@ -291,7 +292,7 @@ class SeaBattle:
             while check:
                 try:
                     x, y = input("Введите координаты для атаки(x y): ").split(' ')
-                    if self.gamefield.size - 1 < int(x) or self.gamefield.size - 1 < int(y) or int(x) <0 or int(y) <0:
+                    if self.gamefield.size - 1 < int(x) or self.gamefield.size - 1 < int(y) or int(x) < 0 or int(y) < 0:
                         raise ValueError
                     self.attack(self.enemyfield, int(x), int(y))
                     self.attack(self.gamefield, randint(0, self.gamefield.size - 1),
@@ -323,6 +324,7 @@ class SeaBattle:
         self.gamefield.show()
         print('Enemyfield')
         self.enemyfield.hidden_show()
+
 
 if __name__ == '__main__':
     # SeaBattle()
