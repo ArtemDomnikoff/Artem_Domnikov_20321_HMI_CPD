@@ -1,3 +1,7 @@
+## 1_1
+longest common prefix
+## Листинг 1_1
+```rs
 pub fn rotate(matrix: &mut Vec<Vec<i32>>) {
     let len = matrix.len() - 1;
     let half = (matrix.len() + 1) / 2;
@@ -26,3 +30,7 @@ fn main(){
     rotate(&mut matrix);
     println!("{:?}", matrix);
 }
+```
+
+### Результат выполнения программы
+![alt text](image.png)
