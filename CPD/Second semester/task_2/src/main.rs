@@ -13,7 +13,5 @@ fn main(){
     let n = 3;
     merge(&mut nums1, m, &mut nums2, n);
     println!("{:?}", nums1);
-
-
 }
 
