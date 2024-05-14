@@ -6,11 +6,14 @@ fn merge(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>, n: i32) {
 }
 
 fn main(){
-    let mut nums1 = vec![0];
-    let m = 0;
-    let mut nums2 = vec![1];
-    let n = 1;
+    let mut nums1 = vec![1,2,3,0,0,0];
+    let m = 3;
+    println!("{:?}", nums1);
+    let mut nums2 = vec![2,3,4];
+    let n = 3;
     merge(&mut nums1, m, &mut nums2, n);
+    println!("{:?}", nums1);
+
 
 }
 
