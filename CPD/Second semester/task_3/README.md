@@ -1,22 +1,27 @@
 ## 1_1
-Length of last word
-
+max area
 ## Листинг 1_1
 ```rs
-fn length_of_last_word(s: &str) -> i32 {
-    let mut count = 0;
-    
-    for chr in s.trim_end().chars().rev() {
-        if chr == ' ' {
-            break
+fn max_area(height: Vec<i32>) -> i32 {
+    let (mut left, mut right) = (0, height.len() - 1);
+    let mut max_area = 0;
+    while left < right {
+        let width: i32 = (right - left) as i32;
+        let min_height = std::cmp::min(height[left], height[right]);
+        let current_area = width * min_height;
+        max_area = std::cmp::max(max_area, current_area);
+
+        // Move the pointer of the shorter line inward
+        if height[left] < height[right] {
+            left += 1;
         } else {
-            count += 1;
+            right -= 1;
         }
     }
-    
-    count
-}
 
+    // Return the maximum area found
+    max_area
+}
 fn main(){
     let s:&str = "Abra Kadabra ";
     let r = length_of_last_word(s);
@@ -25,7 +30,6 @@ fn main(){
 ```
 
 ### Результат выполнения программы
-![alt text](image-1.png)
+![alt text](image.png)
 ### Пояснение
 При запуске создаётся переменная-счётчик. После запускается цикл для каждого сивмола из списка всех символов последнего слова. Если символ - проблел, цикл завершается, иначе к счётчику прибавляется 1 и цикл продолжается.
-
