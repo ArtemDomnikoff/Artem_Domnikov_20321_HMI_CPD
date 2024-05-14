@@ -16,7 +16,7 @@ pub fn longest_common_prefix(mut strs: Vec<String>) ->String {
 return prefix;
 }
 fn main(){
-    let mut strs = vec![String::from("flower"),String::from("flow"),String::from("flight")];
+    let mut strs = vec![String::from("arower"),String::from("deow"),String::from("flight")];
     let prefix = longest_common_prefix(strs);
     println!("{}", prefix);
 }
