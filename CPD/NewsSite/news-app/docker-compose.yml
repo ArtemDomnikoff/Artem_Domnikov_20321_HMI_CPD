@@ -3,7 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres
-    container_name: postgres
+    container_name: postgres_news
     restart: always
     environment:
       POSTGRES_DB: news-site-db
@@ -19,7 +19,7 @@ services:
     container_name: next
     restart: always
     environment:
-      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/news-site-db
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@postgres_news:5432/news-site-db
       PORT: 3000
     ports:
       - "3000:3000"
